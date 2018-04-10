@@ -1,20 +1,25 @@
 package br.com.financeiro.api.model;
 
-import javax.persistence.Embedded;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pessoa")
-public class Pessoa {
+@Table(name = "lancamento")
+public class Lancamento {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,18 +28,42 @@ public class Pessoa {
 
 	@Getter
 	@Setter
-	@NotNull
-	@Size(min = 3, max = 50)
-	private String nome;
+	private String descricao;
+
+	@Column(name = "data_vencimento")
+	@Getter
+	@Setter
+	private LocalDate dataVencimento;
+
+	@Column(name = "data_pagamento")
+	@Getter
+	@Setter
+	private LocalDate dataPagamento;
 
 	@Getter
 	@Setter
-	@NotNull
-	private boolean ativo;
+	private BigDecimal valor;
 
 	@Getter
-	@Embedded
-	private Endereco endereco;
+	@Setter
+	private String observacao;
+
+	@Enumerated(EnumType.STRING)
+	@Getter
+	@Setter
+	private TipoLancamento tipoLancamento;
+
+	@ManyToOne
+	@JoinColumn(name = "categoria_id")
+	@Getter
+	@Setter
+	private Categoria categoria;
+
+	@ManyToOne
+	@JoinColumn(name = "pessoa_id")
+	@Getter
+	@Setter
+	private Pessoa pessoa;
 
 	@Override
 	public int hashCode() {
@@ -52,7 +81,7 @@ public class Pessoa {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pessoa other = (Pessoa) obj;
+		Lancamento other = (Lancamento) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -60,5 +89,5 @@ public class Pessoa {
 			return false;
 		return true;
 	}
-
+	
 }
