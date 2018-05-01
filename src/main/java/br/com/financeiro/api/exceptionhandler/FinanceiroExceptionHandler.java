@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,23 @@ public class FinanceiroExceptionHandler extends ResponseEntityExceptionHandler {
 	@ResponseStatus(HttpStatus.NOT_FOUND)
 	public void handleEmptyResultDataAccessException() {
 
+	}
+
+	@ExceptionHandler({ DataIntegrityViolationException.class })
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public void handleDataIntegrityViolationException() {
+
+	}
+
+	@ExceptionHandler({ PessoaInativaException.class })
+	protected ResponseEntity<Object> handlePessoaInativaException(PessoaInativaException exception) {
+		String mensagemUsuario = messageSource.getMessage("pessoa.inexistente.inativa", null,
+				LocaleContextHolder.getLocale());
+		String mensagemDev = exception.toString();
+
+		List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDev));
+
+		return ResponseEntity.badRequest().body(erros);
 	}
 
 	public static class Erro {

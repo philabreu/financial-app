@@ -1,5 +1,6 @@
 package br.com.financeiro.api.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,13 +14,19 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table(name = "lancamento")
-public class Lancamento {
+public class Lancamento implements Serializable {
+
+	private static final long serialVersionUID = -6481537318484943981L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,41 +35,51 @@ public class Lancamento {
 
 	@Getter
 	@Setter
+	@NotNull
 	private String descricao;
 
 	@Column(name = "data_vencimento")
 	@Getter
 	@Setter
+	@NotNull
+	@DateTimeFormat(pattern="yyyy-mm-dd")
 	private LocalDate dataVencimento;
 
 	@Column(name = "data_pagamento")
 	@Getter
 	@Setter
+	@DateTimeFormat(pattern="yyyy-mm-dd")
 	private LocalDate dataPagamento;
 
 	@Getter
 	@Setter
+	@NotNull
 	private BigDecimal valor;
 
 	@Getter
 	@Setter
+	@Size(max=100)
 	private String observacao;
 
 	@Enumerated(EnumType.STRING)
 	@Getter
 	@Setter
+	@Column(name = "tipo_lancamento")
+	@NotNull
 	private TipoLancamento tipoLancamento;
 
 	@ManyToOne
 	@JoinColumn(name = "categoria_id")
 	@Getter
 	@Setter
+	@NotNull
 	private Categoria categoria;
 
 	@ManyToOne
 	@JoinColumn(name = "pessoa_id")
 	@Getter
 	@Setter
+	@NotNull
 	private Pessoa pessoa;
 
 	@Override
@@ -89,5 +106,5 @@ public class Lancamento {
 			return false;
 		return true;
 	}
-	
+
 }
