@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,33 +39,34 @@ public class CategoriaResource {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')")
 	public List<Categoria> listarTodos() {
 		return categoriaRepositoy.findAll();
 	}
 
+	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_CATEGORIA')")
+	public ResponseEntity<Categoria> buscarPorId(@PathVariable Long id) {
+		Categoria categoriaBuscada = categoriaService.buscarPorId(id);
+
+		return ResponseEntity.ok().body(categoriaBuscada);
+	}
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_CATEGORIA')")
 	public ResponseEntity<Categoria> criar(@Valid @RequestBody Categoria categoria, HttpServletResponse response) {
-		Categoria categoriaCriada = categoriaService.criar(categoria);
 
+		Categoria categoriaCriada = categoriaService.criar(categoria);
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, categoriaCriada.getId()));
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoriaCriada);
-
 	}
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public void remover(@PathVariable Long id) {
 		categoriaService.remover(id);
-	}
-
-	@GetMapping("/{id}")
-	public ResponseEntity<Categoria> buscarPorId(@PathVariable Long id) {
-		Categoria categoriaBuscada = categoriaService.buscarPorId(id);
-
-		return ResponseEntity.ok().body(categoriaBuscada);
-
 	}
 
 	@PutMapping("/{id}")

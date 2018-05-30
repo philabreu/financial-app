@@ -35,11 +35,7 @@ public class LancamentoService {
 	}
 
 	public Lancamento criar(Lancamento lancamento) {
-		Pessoa pessoa = pessoaRepository.findOne(lancamento.getPessoa().getId());
-
-		if (pessoa == null || pessoa.isInativo()) {
-			throw new PessoaInativaException("pessoa inexistente ou inativa.");
-		}
+		validarPessoa(lancamento);
 
 		return lancamentoRepository.save(lancamento);
 	}
@@ -52,9 +48,24 @@ public class LancamentoService {
 	public Lancamento atualizar(Lancamento lancamento, Long id) {
 		Lancamento lancamentoCriado = buscarPorId(id);
 
+		if (!(lancamento.getPessoa().equals(lancamentoCriado.getPessoa()))) {
+			validarPessoa(lancamentoCriado);
+		}
 		BeanUtils.copyProperties(lancamento, lancamentoCriado, "id");
 
 		return lancamentoRepository.save(lancamentoCriado);
+	}
+
+	private void validarPessoa(Lancamento lancamento) {
+		Pessoa pessoa = null;
+
+		if (lancamento.getPessoa().getId() != null) {
+			pessoa = pessoaRepository.findOne(lancamento.getPessoa().getId());
+		}
+
+		if (pessoa == null || pessoa.isInativo()) {
+			throw new PessoaInativaException("pessoa inexistente ou inativa.");
+		}
 	}
 
 }

@@ -1,4 +1,4 @@
-package br.com.financeiro.api.cors;
+package br.com.financeiro.api.security;
 
 import java.io.IOException;
 

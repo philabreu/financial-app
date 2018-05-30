@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,11 +39,13 @@ public class PessoaResource {
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
 	public List<Pessoa> listarTodos() {
 		return pessoaRepository.findAll();
 	}
 
 	@GetMapping("/{id}")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
 	public ResponseEntity<Pessoa> buscarPorId(@PathVariable Long id) {
 		Pessoa pessoaBuscada = pessoaService.buscarPorId(id);
 
@@ -51,6 +54,7 @@ public class PessoaResource {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
 		Pessoa pessoaCriada = pessoaService.criar(pessoa);
 
@@ -61,6 +65,7 @@ public class PessoaResource {
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_PESSOA')")
 	public void remover(@PathVariable Long id) {
 		pessoaService.remover(id);
 	}
@@ -71,8 +76,7 @@ public class PessoaResource {
 
 		return ResponseEntity.ok(pessoaSalva);
 	}
-	
-	
+
 	@PutMapping("/{id}/ativo")
 	public void atualizarParcial(@PathVariable Long id, @RequestBody Boolean ativo) {
 		pessoaService.atualizarParcial(id, ativo);
