@@ -37,13 +37,11 @@ public class PessoaService {
 	}
 
 	public void remover(Long id) {
-		
 		Pessoa pessoaBuscada = buscarPorId(id);
 		pessoaRepository.delete(pessoaBuscada);
 	}
 
 	public void atualizarParcial(Long id, Boolean ativo) {
-		
 		Pessoa pessoaSalva = buscarPorId(id);
 		pessoaSalva.setAtivo(ativo);
 		pessoaRepository.save(pessoaSalva);

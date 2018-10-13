@@ -25,7 +25,4 @@ public class RecursoCriadoEvent extends ApplicationEvent {
 	public Long getId() {
 		return id;
 	}
-
-	
-	
 }
