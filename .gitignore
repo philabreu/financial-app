@@ -24,3 +24,5 @@ mvnw
 mvnw\.cmd
 
 \.mvn/wrapper/
+
+\.classpath
