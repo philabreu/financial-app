@@ -1,7 +1,11 @@
 package br.com.financeiro.api.service;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +16,8 @@ import br.com.financeiro.api.repository.LancamentoRepository;
 @Service
 public class CategoriaService {
 
+	private final static Logger LOGGER = Logger.getLogger(CategoriaService.class.getName());	
+	
 	@Autowired
 	private CategoriaRepositoy categoriaRepository;
 
@@ -19,7 +25,14 @@ public class CategoriaService {
 	private LancamentoRepository lancamentoRepository;
 
 	public Categoria criar(Categoria categoria) {
-		return categoriaRepository.save(categoria);
+		try {
+			return categoriaRepository.save(categoria);
+		} catch (DataAccessResourceFailureException e) {
+			LOGGER.log(Level.SEVERE, e.toString(), e);
+			
+			throw new DataAccessResourceFailureException("erro ao conectar ao banco de dados");
+		}
+		
 	}
 
 	public Categoria buscarPorId(Long id) {
@@ -35,10 +48,14 @@ public class CategoriaService {
 	public void remover(Long id) {
 		Categoria categoriaBuscada = buscarPorId(id);
 
-		lancamentoRepository.findAll().stream().forEach(cadaLancamento -> {
-			if (cadaLancamento.getCategoria().getId().equals(categoriaBuscada.getId())) {
-				throw new RuntimeException("Categoria não pode ser excluída pois pertence a um lançamento.");
-			}
+		
+		lancamentoRepository
+			.findAll()
+			.stream()
+			.forEach(cadaLancamento -> {
+				if (cadaLancamento.getCategoria().getId().equals(categoriaBuscada.getId())) {
+					throw new RuntimeException("Categoria não pode ser excluída pois pertence a um lançamento.");
+				}
 		});
 
 		categoriaRepository.delete(categoriaBuscada);
