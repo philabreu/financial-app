@@ -24,7 +24,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name = "lancamento")
-public class Lancamento implements Serializable {
+public class Entry implements Serializable {
 
 	private static final long serialVersionUID = -6481537318484943981L;
 
@@ -66,21 +66,21 @@ public class Lancamento implements Serializable {
 	@Setter
 	@Column(name = "tipo_lancamento")
 	@NotNull
-	private TipoLancamento tipoLancamento;
+	private EntryType entryType;
 
 	@ManyToOne
 	@JoinColumn(name = "categoria_id")
 	@Getter
 	@Setter
 	@NotNull
-	private Categoria categoria;
+	private Category category;
 
 	@ManyToOne
 	@JoinColumn(name = "pessoa_id")
 	@Getter
 	@Setter
 	@NotNull
-	private Pessoa pessoa;
+	private Person person;
 
 	@Override
 	public int hashCode() {
@@ -98,7 +98,7 @@ public class Lancamento implements Serializable {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Lancamento other = (Lancamento) obj;
+		Entry other = (Entry) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

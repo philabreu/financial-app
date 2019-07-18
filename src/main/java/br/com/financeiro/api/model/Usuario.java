@@ -26,7 +26,7 @@ public class Usuario {
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "id_usuario"), 
 				inverseJoinColumns = @JoinColumn(name = "id_permissao"))
-	private List<Permissao> permissoes;
+	private List<Permission> permissoes;
 
 	public String getNome() {
 		return nome;
@@ -56,7 +56,7 @@ public class Usuario {
 		return id;
 	}
 
-	public List<Permissao> getPermissoes() {
+	public List<Permission> getPermissoes() {
 		return permissoes;
 	}
 

@@ -6,7 +6,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "permissao")
-public class Permissao {
+public class Permission {
 
 	@Id
 	private Long id;
@@ -41,7 +41,7 @@ public class Permissao {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Permissao other = (Permissao) obj;
+		Permission other = (Permission) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

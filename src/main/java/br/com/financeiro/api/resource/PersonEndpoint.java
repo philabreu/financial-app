@@ -21,13 +21,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.financeiro.api.event.RecursoCriadoEvent;
-import br.com.financeiro.api.model.Pessoa;
+import br.com.financeiro.api.model.Person;
 import br.com.financeiro.api.repository.PessoaRepository;
 import br.com.financeiro.api.service.PessoaService;
 
 @RestController
 @RequestMapping("/pessoas")
-public class PessoaResource {
+public class PersonEndpoint {
 
 	@Autowired
 	private PessoaRepository pessoaRepository;
@@ -40,14 +40,14 @@ public class PessoaResource {
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
-	public List<Pessoa> listarTodos() {
+	public List<Person> listarTodos() {
 		return pessoaRepository.findAll();
 	}
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
-	public ResponseEntity<Pessoa> buscarPorId(@PathVariable Long id) {
-		Pessoa pessoaBuscada = pessoaService.buscarPorId(id);
+	public ResponseEntity<Person> buscarPorId(@PathVariable Long id) {
+		Person pessoaBuscada = pessoaService.buscarPorId(id);
 
 		return ResponseEntity.ok().body(pessoaBuscada);
 	}
@@ -55,8 +55,8 @@ public class PessoaResource {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
-	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
-		Pessoa pessoaCriada = pessoaService.criar(pessoa);
+	public ResponseEntity<Person> criar(@Valid @RequestBody Person person, HttpServletResponse response) {
+		Person pessoaCriada = pessoaService.criar(person);
 
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaCriada.getId()));
 
@@ -71,8 +71,8 @@ public class PessoaResource {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Pessoa> atualizar(@PathVariable Long id, @Valid @RequestBody Pessoa pessoa) {
-		Pessoa pessoaSalva = pessoaService.atualizar(pessoa, id);
+	public ResponseEntity<Person> atualizar(@PathVariable Long id, @Valid @RequestBody Person person) {
+		Person pessoaSalva = pessoaService.atualizar(person, id);
 
 		return ResponseEntity.ok(pessoaSalva);
 	}

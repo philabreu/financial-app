@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.financeiro.api.model.Usuario;
-import br.com.financeiro.api.model.UsuarioSistema;
+import br.com.financeiro.api.model.SystemUser;
 import br.com.financeiro.api.repository.UsuarioRepository;
 
 @Service
@@ -28,7 +28,7 @@ public class AppUserDetailsService implements UserDetailsService {
 		Optional<Usuario> usuarioEmail = usuarioRepository.findByEmail(email);
 		Usuario usuario = usuarioEmail.orElseThrow(() -> new UsernameNotFoundException("usuário/senha inválido."));
 
-		return new UsuarioSistema(usuario, getPermissoes(usuario));
+		return new SystemUser(usuario, getPermissoes(usuario));
 	}
 
 	private Collection<? extends GrantedAuthority> getPermissoes(Usuario usuario) {

@@ -6,7 +6,7 @@ import javax.validation.constraints.Size;
 import lombok.Getter;
 
 @Embeddable
-public class Endereco {
+public class Address {
 
 	@Getter
 	@Size(max = 30)

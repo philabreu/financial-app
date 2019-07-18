@@ -1,27 +1,28 @@
 package br.com.financeiro.api.model;
 
-import javax.persistence.Embedded;
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "pessoa")
-public class Pessoa {
+@Table(name = "categoria")
+public class Category implements Serializable {
+
+	private static final long serialVersionUID = -3560610797955179965L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Getter
+	@Setter
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Getter
@@ -29,21 +30,6 @@ public class Pessoa {
 	@NotNull
 	@Size(min = 3, max = 50)
 	private String nome;
-
-	@Getter
-	@Setter
-	@NotNull
-	private boolean ativo;
-
-	@Getter
-	@Embedded
-	private Endereco endereco;
-	
-	@JsonIgnore
-	@Transient
-	public boolean isInativo() {
-		return !this.ativo;
-	}
 
 	@Override
 	public int hashCode() {
@@ -61,7 +47,7 @@ public class Pessoa {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Pessoa other = (Pessoa) obj;
+		Category other = (Category) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;

@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.financeiro.api.event.RecursoCriadoEvent;
-import br.com.financeiro.api.model.Lancamento;
+import br.com.financeiro.api.model.Entry;
 import br.com.financeiro.api.service.LancamentoService;
 
 @RestController
 @RequestMapping("/lancamentos")
-public class LancamentoResource {
+public class EntryEndpoint {
 
 	@Autowired
 	private LancamentoService lancamentoService;
@@ -34,14 +34,14 @@ public class LancamentoResource {
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
-	public Iterable<Lancamento> listarTodos() {
+	public Iterable<Entry> listarTodos() {
 		return lancamentoService.findAll();
 	}
 
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
-	public ResponseEntity<Lancamento> buscarPorId(@PathVariable Long id) {
-		Lancamento lancamentoBuscado = lancamentoService.buscarPorId(id);
+	public ResponseEntity<Entry> buscarPorId(@PathVariable Long id) {
+		Entry lancamentoBuscado = lancamentoService.buscarPorId(id);
 
 		return ResponseEntity.ok().body(lancamentoBuscado);
 	}
@@ -49,8 +49,8 @@ public class LancamentoResource {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO')")
-	public ResponseEntity<Lancamento> criar(@Valid @RequestBody Lancamento lancamento, HttpServletResponse response) {
-		Lancamento lancamentoCriado = lancamentoService.criar(lancamento);
+	public ResponseEntity<Entry> criar(@Valid @RequestBody Entry entry, HttpServletResponse response) {
+		Entry lancamentoCriado = lancamentoService.criar(entry);
 
 		publisher.publishEvent(new RecursoCriadoEvent(this, response, lancamentoCriado.getId()));
 
@@ -66,9 +66,9 @@ public class LancamentoResource {
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Lancamento> atualizar(@Valid @RequestBody Lancamento lancamento, @PathVariable Long id) {
+	public ResponseEntity<Entry> atualizar(@Valid @RequestBody Entry entry, @PathVariable Long id) {
 		try {
-			Lancamento lancamentoAtualizado = lancamentoService.atualizar(lancamento, id);
+			Entry lancamentoAtualizado = lancamentoService.atualizar(entry, id);
 
 			return ResponseEntity.ok(lancamentoAtualizado);
 		} catch (IllegalArgumentException exception) {

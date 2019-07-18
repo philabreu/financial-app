@@ -3,9 +3,9 @@ package br.com.financeiro.api.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import br.com.financeiro.api.model.Categoria;
+import br.com.financeiro.api.model.Category;
 
 @Repository
-public interface CategoriaRepositoy extends JpaRepository<Categoria, Long> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 }

@@ -3,7 +3,7 @@ package br.com.financeiro.api.repository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import br.com.financeiro.api.model.TipoLancamento;
+import br.com.financeiro.api.model.EntryType;
 
 public class ResumoLancamento {
 
@@ -17,7 +17,7 @@ public class ResumoLancamento {
 
 	private BigDecimal valor;
 
-	private TipoLancamento tipoLancamento;
+	private EntryType entryType;
 
 	private String categoria;
 
@@ -55,12 +55,12 @@ public class ResumoLancamento {
 		this.valor = valor;
 	}
 
-	public TipoLancamento getTipoLancamento() {
-		return tipoLancamento;
+	public EntryType getTipoLancamento() {
+		return entryType;
 	}
 
-	public void setTipoLancamento(TipoLancamento tipoLancamento) {
-		this.tipoLancamento = tipoLancamento;
+	public void setTipoLancamento(EntryType entryType) {
+		this.entryType = entryType;
 	}
 
 	public String getCategoria() {
@@ -84,13 +84,13 @@ public class ResumoLancamento {
 	}
 
 	public ResumoLancamento(Long id, String descricao, LocalDate dataVencimento, LocalDate dataPagamento,
-			BigDecimal valor, TipoLancamento tipoLancamento, String categoria, String pessoa) {
+			BigDecimal valor, EntryType entryType, String categoria, String pessoa) {
 		this.id = id;
 		this.descricao = descricao;
 		this.dataVencimento = dataVencimento;
 		this.dataPagamento = dataPagamento;
 		this.valor = valor;
-		this.tipoLancamento = tipoLancamento;
+		this.entryType = entryType;
 		this.categoria = categoria;
 		this.pessoa = pessoa;
 	}

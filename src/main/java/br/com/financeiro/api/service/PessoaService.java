@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
-import br.com.financeiro.api.model.Pessoa;
+import br.com.financeiro.api.model.Person;
 import br.com.financeiro.api.repository.LancamentoRepository;
 import br.com.financeiro.api.repository.PessoaRepository;
 
@@ -18,8 +18,8 @@ public class PessoaService {
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 
-	public Pessoa buscarPorId(Long id) {
-		Pessoa pessoaBuscada = pessoaRepository.findOne(id);
+	public Person buscarPorId(Long id) {
+		Person pessoaBuscada = pessoaRepository.findOne(id);
 
 		if (pessoaBuscada == null) {
 			throw new EmptyResultDataAccessException(1);
@@ -28,23 +28,23 @@ public class PessoaService {
 		return pessoaBuscada;
 	}
 
-	public Pessoa criar(Pessoa pessoa) {
-		return pessoaRepository.save(pessoa);
+	public Person criar(Person person) {
+		return pessoaRepository.save(person);
 	}
 
-	public Pessoa atualizar(Pessoa pessoa, Long id) {
-		Pessoa pessoaSalva = buscarPorId(id);
+	public Person atualizar(Person person, Long id) {
+		Person pessoaSalva = buscarPorId(id);
 
-		BeanUtils.copyProperties(pessoa, pessoaSalva, "id");
+		BeanUtils.copyProperties(person, pessoaSalva, "id");
 
 		return pessoaRepository.save(pessoaSalva);
 	}
 
 	public void remover(Long id) {
-		Pessoa pessoaBuscada = buscarPorId(id);
+		Person pessoaBuscada = buscarPorId(id);
 		
 		lancamentoRepository.findAll().stream().forEach(lancamento -> {
-			if(lancamento.getPessoa().getId().equals(pessoaBuscada.getId())) {
+			if(lancamento.getPerson().getId().equals(pessoaBuscada.getId())) {
 				throw new RuntimeException("pessoa não pode ser excluída pois pertence a um lançamento.");
 			}
 		});
@@ -53,7 +53,7 @@ public class PessoaService {
 	}
 
 	public void atualizarParcial(Long id, Boolean ativo) {
-		Pessoa pessoaSalva = buscarPorId(id);
+		Person pessoaSalva = buscarPorId(id);
 		pessoaSalva.setAtivo(ativo);
 		pessoaRepository.save(pessoaSalva);
 	}
