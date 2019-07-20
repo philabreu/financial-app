@@ -1,55 +1,38 @@
-package br.com.financeiro.api.resource;
+package br.com.financeiro.api.service;
 
 import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-import br.com.financeiro.api.event.CreatedResourceEvent;
 import br.com.financeiro.api.model.Person;
-import br.com.financeiro.api.service.PersonService;
+import br.com.financeiro.api.repository.EntryRepository;
+import br.com.financeiro.api.repository.PersonRepository;
 
-@RestController
-@RequestMapping("/pessoa")
-public class PersonEndpoint {
-	private static final Logger LOGGER = LoggerFactory.getLogger(PersonEndpoint.class);
+@Service
+public class PersonService {
 
-	@Autowired
-	private PersonService service;
+	private static final Logger LOGGER = LoggerFactory.getLogger(PersonService.class);
 
 	@Autowired
-	private ApplicationEventPublisher publisher;
+	private PersonRepository personRepository;
 
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
+	@Autowired
+	private EntryRepository entryRepository;
 
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
-	public ResponseEntity<?> findAll() {
-		LOGGER.info("calling findAll method in PersonEndpoint:");
+	public List<Person> findAll() {
 		try {
-			List<Person> peopleList = service.findAll();
-
-			return ResponseEntity.ok(peopleList);
+			List<Person> peopleList = personRepository.findAll();
+			
+			return peopleList;
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
@@ -61,15 +44,15 @@ public class PersonEndpoint {
 		}
 	}
 
-	@GetMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
-	public ResponseEntity<?> findOne(@PathVariable Long id) {
-		LOGGER.info("calling findOne method in PersonEndpoint:");
+	public Person findOne(Long id) {
 		try {
-			Person pessoaBuscada = service.findOne(id);
+			Person pessoaBuscada = personRepository.findOne(id);
 
-			return ResponseEntity.ok().body(pessoaBuscada);
+			if (pessoaBuscada == null) {
+				throw new EmptyResultDataAccessException(1);
+			}
+
+			return pessoaBuscada;
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
@@ -81,16 +64,10 @@ public class PersonEndpoint {
 		}
 	}
 
-	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
-	public ResponseEntity<?> save(@Valid @RequestBody Person person, HttpServletResponse response) {
-		LOGGER.info("calling save method in PersonEndpoint:");
+	public Person save(Person person) {
 		try {
-			Person pessoaCriada = service.save(person);
-			publisher.publishEvent(new CreatedResourceEvent(this, response, pessoaCriada.getId()));
+			return personRepository.save(person);
 
-			return ResponseEntity.status(HttpStatus.CREATED).body(pessoaCriada);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
@@ -102,13 +79,13 @@ public class PersonEndpoint {
 		}
 	}
 
-	@DeleteMapping("/{id}")
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('ROLE_REMOVER_PESSOA')")
-	public void delete(@PathVariable Long id) {
-		LOGGER.info("calling delete method in PersonEndpoint:");
+	public Person update(Person person, Long id) {
 		try {
-			service.delete(id);
+			Person pessoaSalva = findOne(id);
+
+			BeanUtils.copyProperties(person, pessoaSalva, "id");
+
+			return personRepository.save(pessoaSalva);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
@@ -120,14 +97,19 @@ public class PersonEndpoint {
 		}
 	}
 
-	@PutMapping("/{id}")
-	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Person person) {
-		LOGGER.info("calling update method in PersonEndpoint:");
+	public void delete(Long id) {
 		try {
-			Person pessoaSalva = service.update(person, id);
+			Person pessoaBuscada = findOne(id);
 
-			return ResponseEntity.ok(pessoaSalva);
+			entryRepository.findAll()
+			.stream()
+			.forEach(lancamento -> {
+				if (lancamento.getPerson().getId().equals(pessoaBuscada.getId())) {
+					throw new RuntimeException("pessoa não pode ser excluída pois pertence a um lançamento.");
+				}
+			});
+
+			personRepository.delete(pessoaBuscada);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
@@ -139,12 +121,12 @@ public class PersonEndpoint {
 		}
 	}
 
-	@PutMapping("/{id}/ativo")
-	@ResponseStatus(HttpStatus.OK)
-	public void partialUpdate(@PathVariable Long id, @RequestBody Boolean ativo) {
-		LOGGER.info("calling partialUpdate method in PersonEndpoint:");
+	public void partialUpdate(Long id, Boolean ativo) {
 		try {
-			service.partialUpdate(id, ativo);
+			Person pessoaSalva = findOne(id);
+			pessoaSalva.setAtivo(ativo);
+
+			personRepository.save(pessoaSalva);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));

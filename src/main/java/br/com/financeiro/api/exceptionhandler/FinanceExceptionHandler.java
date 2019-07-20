@@ -23,7 +23,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
-public class FinanceiroExceptionHandler extends ResponseEntityExceptionHandler {
+public class FinanceExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@Autowired
 	private MessageSource messageSource;
@@ -61,8 +61,8 @@ public class FinanceiroExceptionHandler extends ResponseEntityExceptionHandler {
 
 	}
 
-	@ExceptionHandler({ PessoaInativaException.class })
-	protected ResponseEntity<Object> handlePessoaInativaException(PessoaInativaException exception) {
+	@ExceptionHandler({ InactivePersonException.class })
+	protected ResponseEntity<Object> handlePessoaInativaException(InactivePersonException exception) {
 		String mensagemUsuario = messageSource.getMessage("pessoa.inexistente.inativa", null,
 				LocaleContextHolder.getLocale());
 		String mensagemDev = exception.toString();

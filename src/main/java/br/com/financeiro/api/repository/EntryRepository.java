@@ -1,9 +1,11 @@
 package br.com.financeiro.api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import br.com.financeiro.api.model.Entry;
 
-public interface LancamentoRepository extends JpaRepository<Entry, Long> {
+@Repository
+public interface EntryRepository extends JpaRepository<Entry, Long> {
 
 }

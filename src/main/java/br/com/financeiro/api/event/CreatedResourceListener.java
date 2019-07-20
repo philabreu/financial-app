@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @Component
-public class RecursoCriadoListener implements ApplicationListener<RecursoCriadoEvent> {
+public class CreatedResourceListener implements ApplicationListener<CreatedResourceEvent> {
 
 	@Override
-	public void onApplicationEvent(RecursoCriadoEvent recursoCriadoEvent) {
+	public void onApplicationEvent(CreatedResourceEvent createdResourceEvent) {
 
-		HttpServletResponse response = recursoCriadoEvent.getResponse();
-		Long idRecurso = recursoCriadoEvent.getId();
+		HttpServletResponse response = createdResourceEvent.getResponse();
+		Long idRecurso = createdResourceEvent.getId();
 
 		adicionarHeadLocation(response, idRecurso);
 	}
