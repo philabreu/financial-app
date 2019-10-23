@@ -106,7 +106,7 @@ public class CategoryEndpoint {
 	public void delete(@PathVariable Long id) {
 		LOGGER.info("calling delete method in CategoryEndpoint:");
 		try {
-			service.remover(id);
+			service.delete(id);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
 			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));

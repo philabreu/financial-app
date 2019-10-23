@@ -10,55 +10,35 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "usuario")
 public class Usuario {
 
 	@Id
+	@Getter
 	private Long id;
 
-	private String nome;
+	@Getter
+	@Setter
+	private String name;
 
+	@Getter
+	@Setter
 	private String email;
 
-	private String senha;
+	@Getter
+	@Setter
+	private String password;
 
+	@Getter
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "usuario_permissao", joinColumns = @JoinColumn(name = "id_usuario"), 
 				inverseJoinColumns = @JoinColumn(name = "id_permissao"))
-	private List<Permission> permissoes;
+	private List<Permission> permissions;
 
-	public String getNome() {
-		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
-	public Long getId() {
-		return id;
-	}
-
-	public List<Permission> getPermissoes() {
-		return permissoes;
-	}
 
 	@Override
 	public int hashCode() {

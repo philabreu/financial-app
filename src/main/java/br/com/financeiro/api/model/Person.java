@@ -28,12 +28,12 @@ public class Person {
 	@Setter
 	@NotNull
 	@Size(min = 3, max = 50)
-	private String nome;
+	private String name;
 
 	@Getter
 	@Setter
 	@NotNull
-	private boolean ativo;
+	private boolean active;
 
 	@Getter
 	@Embedded
@@ -41,8 +41,8 @@ public class Person {
 	
 	@JsonIgnore
 	@Transient
-	public boolean isInativo() {
-		return !this.ativo;
+	public boolean isInactive() {
+		return !this.active;
 	}
 
 	@Override

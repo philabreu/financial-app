@@ -4,26 +4,20 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
 @Table(name = "permissao")
 public class Permission {
 
 	@Id
+	@Getter
 	private Long id;
 
+	@Getter
+	@Setter
 	private String descricao;
-
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public Long getId() {
-		return id;
-	}
 
 	@Override
 	public int hashCode() {

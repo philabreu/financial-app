@@ -12,11 +12,21 @@ public class SystemUser extends User {
 	private Usuario usuario;
 
 	public SystemUser(Usuario usuario, Collection<? extends GrantedAuthority> authorities) {
-		super(usuario.getEmail(), usuario.getSenha(), authorities);
+		super(usuario.getEmail(), usuario.getPassword(), authorities);
 		this.usuario = usuario;
 	}
 
 	public Usuario getUsuario() {
 		return usuario;
+	}
+	
+	@Override
+	public boolean equals(Object rhs) {
+		return super.equals(rhs);
+	}
+	
+	@Override
+	public int hashCode() {
+		return super.hashCode();
 	}
 }

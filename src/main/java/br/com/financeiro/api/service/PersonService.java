@@ -124,7 +124,7 @@ public class PersonService {
 	public void partialUpdate(Long id, Boolean ativo) {
 		try {
 			Person pessoaSalva = findOne(id);
-			pessoaSalva.setAtivo(ativo);
+			pessoaSalva.setActive(ativo);
 
 			personRepository.save(pessoaSalva);
 		} catch (HttpClientErrorException e) {

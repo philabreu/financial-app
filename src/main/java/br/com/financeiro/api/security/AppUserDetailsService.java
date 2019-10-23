@@ -15,13 +15,13 @@ import org.springframework.stereotype.Service;
 
 import br.com.financeiro.api.model.Usuario;
 import br.com.financeiro.api.model.SystemUser;
-import br.com.financeiro.api.repository.UsuarioRepository;
+import br.com.financeiro.api.repository.UserRepository;
 
 @Service
 public class AppUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private UsuarioRepository usuarioRepository;
+	private UserRepository usuarioRepository;
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -34,7 +34,7 @@ public class AppUserDetailsService implements UserDetailsService {
 	private Collection<? extends GrantedAuthority> getPermissoes(Usuario usuario) {
 		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
 
-		usuario.getPermissoes()
+		usuario.getPermissions()
 				.forEach(permissions -> authorities
 						.add(new SimpleGrantedAuthority(permissions.getDescricao())));
 

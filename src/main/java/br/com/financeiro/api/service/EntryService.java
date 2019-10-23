@@ -125,7 +125,7 @@ public class EntryService {
 			person = personRepository.findOne(entry.getPerson().getId());
 		}
 
-		if (person == null || person.isInativo()) {
+		if (person == null || person.isInactive()) {
 			throw new InactivePersonException("pessoa inexistente ou inativa.");
 		}
 	}

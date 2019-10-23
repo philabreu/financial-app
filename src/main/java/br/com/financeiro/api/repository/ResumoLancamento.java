@@ -9,7 +9,7 @@ public class ResumoLancamento {
 
 	private Long id;
 
-	private String descricao;
+	private String description;
 
 	private LocalDate dataVencimento;
 
@@ -23,12 +23,12 @@ public class ResumoLancamento {
 
 	private String pessoa;
 
-	public String getDescricao() {
-		return descricao;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	public LocalDate getDataVencimento() {
@@ -86,7 +86,7 @@ public class ResumoLancamento {
 	public ResumoLancamento(Long id, String descricao, LocalDate dataVencimento, LocalDate dataPagamento,
 			BigDecimal valor, EntryType entryType, String categoria, String pessoa) {
 		this.id = id;
-		this.descricao = descricao;
+		this.description = descricao;
 		this.dataVencimento = dataVencimento;
 		this.dataPagamento = dataPagamento;
 		this.valor = valor;

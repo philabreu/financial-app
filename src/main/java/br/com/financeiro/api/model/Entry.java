@@ -49,12 +49,12 @@ public class Entry implements Serializable {
 	@Getter
 	@Setter
 	@DateTimeFormat(pattern="yyyy-mm-dd")
-	private LocalDate dataPagamento;
+	private LocalDate paymentDate;
 
 	@Getter
 	@Setter
 	@NotNull
-	private BigDecimal valor;
+	private BigDecimal value;
 
 	@Getter
 	@Setter
