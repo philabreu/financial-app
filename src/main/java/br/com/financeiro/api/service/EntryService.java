@@ -1,6 +1,7 @@
 package br.com.financeiro.api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -37,47 +38,41 @@ public class EntryService {
 			return entryList;
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	public Entry findOne(Long id) {
 		try {
-			Entry lancamentoBuscado = entryRepository.findOne(id);
+			Optional<Entry> searchedEntry = entryRepository.findById(id);
 
-			if (lancamentoBuscado == null) {
+			if (searchedEntry.isEmpty()) {
 				throw new EmptyResultDataAccessException(1);
 			}
 
-			return lancamentoBuscado;
+			return searchedEntry.get();
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	public Entry save(Entry entry) {
 		try {
-			this.validatePerson(entry);
-			
+			validatePerson(entry);
+
 			return entryRepository.save(entry);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
@@ -88,11 +83,9 @@ public class EntryService {
 			entryRepository.delete(lancamentoBuscado);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
@@ -100,32 +93,30 @@ public class EntryService {
 	public Entry update(Entry entry, Long id) {
 		try {
 			Entry lancamentoCriado = findOne(id);
-			
+
 			if (!(entry.getPerson().equals(lancamentoCriado.getPerson()))) {
 				validatePerson(lancamentoCriado);
 			}
 			BeanUtils.copyProperties(entry, lancamentoCriado, "id");
-			
+
 			return entryRepository.save(lancamentoCriado);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	private void validatePerson(Entry entry) {
-		Person person = null;
+		Optional<Person> person = null;
 
 		if (entry.getPerson().getId() != null) {
-			person = personRepository.findOne(entry.getPerson().getId());
+			person = personRepository.findById(entry.getPerson().getId());
 		}
 
-		if (person == null || person.isInactive()) {
+		if (person.isEmpty() || person.get().isInactive()) {
 			throw new InactivePersonException("pessoa inexistente ou inativa.");
 		}
 	}

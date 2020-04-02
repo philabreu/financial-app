@@ -26,115 +26,122 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import br.com.financeiro.api.event.CreatedResourceEvent;
-import br.com.financeiro.api.model.Entry;
-import br.com.financeiro.api.service.EntryService;
+import br.com.financeiro.api.model.Person;
+import br.com.financeiro.api.service.PersonService;
 
 @RestController
-@RequestMapping("/lancamento")
-public class EntryEndpoint {
-	private static final Logger LOGGER = LoggerFactory.getLogger(EntryEndpoint.class);
+@RequestMapping("/pessoa")
+public class PersonResource {
+	private static final Logger LOGGER = LoggerFactory.getLogger(PersonResource.class);
 
 	@Autowired
-	private EntryService service;
+	private PersonService service;
 
 	@Autowired
 	private ApplicationEventPublisher publisher;
 
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
-	public ResponseEntity<?> findAll() {
-		LOGGER.info("calling findAll method in EntryEndpoint:");
-		try {
-			List<Entry> entryList = service.findAll();
 
-			return ResponseEntity.ok(entryList);
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
+	public ResponseEntity<?> findAll() {
+		LOGGER.info("calling findAll method in PersonResource:");
+		try {
+			List<Person> peopleList = service.findAll();
+
+			return ResponseEntity.ok(peopleList);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	@GetMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_LANCAMENTO')")
+	@PreAuthorize("hasAuthority('ROLE_PESQUISAR_PESSOA')")
 	public ResponseEntity<?> findOne(@PathVariable Long id) {
-		LOGGER.info("calling findOne method in EntryEndpoint:");
+		LOGGER.info("calling findOne method in PersonResource:");
 		try {
-			Entry lancamentoBuscado = service.findOne(id);
+			Person pessoaBuscada = service.findOne(id);
 
-			return ResponseEntity.ok().body(lancamentoBuscado);
+			return ResponseEntity.ok().body(pessoaBuscada);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_LANCAMENTO')")
-	public ResponseEntity<Entry> save(@Valid @RequestBody Entry entry, HttpServletResponse response) {
-		LOGGER.info("calling save method in EntryEndpoint:");
+	@PreAuthorize("hasAuthority('ROLE_CADASTRAR_PESSOA')")
+	public ResponseEntity<?> save(@Valid @RequestBody Person person, HttpServletResponse response) {
+		LOGGER.info("calling save method in PersonResource:");
 		try {
-			Entry lancamentoCriado = service.save(entry);
-			publisher.publishEvent(new CreatedResourceEvent(this, response, lancamentoCriado.getId()));
+			Person pessoaCriada = service.save(person);
+			publisher.publishEvent(new CreatedResourceEvent(this, response, pessoaCriada.getId()));
 
-			return ResponseEntity.status(HttpStatus.CREATED).body(lancamentoCriado);
+			return ResponseEntity.status(HttpStatus.CREATED).body(pessoaCriada);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@PreAuthorize("hasAuthority('ROLE_REMOVER_LANCAMENTO')")
-	public void remove(@PathVariable Long id) {
-		LOGGER.info("calling remove method in EntryEndpoint:");
+	@PreAuthorize("hasAuthority('ROLE_REMOVER_PESSOA')")
+	public void delete(@PathVariable Long id) {
+		LOGGER.info("calling delete method in PersonResource:");
 		try {
 			service.delete(id);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<?> update(@Valid @RequestBody Entry entry, @PathVariable Long id) {
-		LOGGER.info("calling update method in EntryEndpoint:");
+	public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody Person person) {
+		LOGGER.info("calling update method in PersonResource:");
 		try {
-			Entry lancamentoAtualizado = service.update(entry, id);
+			Person pessoaSalva = service.update(person, id);
 
-			return ResponseEntity.ok(lancamentoAtualizado);
+			return ResponseEntity.ok(pessoaSalva);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
+
+	@PutMapping("/{id}/ativo")
+	@ResponseStatus(HttpStatus.OK)
+	public void partialUpdate(@PathVariable Long id, @RequestBody Boolean ativo) {
+		LOGGER.info("calling partialUpdate method in PersonResource:");
+		try {
+			service.partialUpdate(id, ativo);
+		} catch (HttpClientErrorException e) {
+			LOGGER.error(ExceptionUtils.getStackTrace(e));
+			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
+		} catch (HttpServerErrorException e) {
+			LOGGER.error(ExceptionUtils.getStackTrace(e));
+			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
+		}
+	}
+
 }

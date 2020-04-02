@@ -1,8 +1,8 @@
 package br.com.financeiro.api.service;
 
-import br.com.financeiro.api.model.Category;
-import br.com.financeiro.api.repository.CategoryRepository;
-import br.com.financeiro.api.repository.EntryRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-import java.util.List;
+import br.com.financeiro.api.model.Category;
+import br.com.financeiro.api.repository.CategoryRepository;
+import br.com.financeiro.api.repository.EntryRepository;
 
 @Service
 public class CategoryService {
@@ -49,12 +51,13 @@ public class CategoryService {
 	}
 
 	public Category findOne(Long id) {
-		Category categoriaBuscada = repository.findOne(id);
-		if (categoriaBuscada == null) {
+		Optional<Category> categoryOptional = repository.findById(id);
+
+		if (categoryOptional.isEmpty()) {
 			throw new EmptyResultDataAccessException(1);
 		}
 
-		return categoriaBuscada;
+		return categoryOptional.get();
 	}
 
 	public void delete(Long id) {

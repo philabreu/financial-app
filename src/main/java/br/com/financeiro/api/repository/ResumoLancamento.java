@@ -15,13 +15,13 @@ public class ResumoLancamento {
 
 	private LocalDate dataPagamento;
 
-	private BigDecimal valor;
+	private BigDecimal value;
 
 	private EntryType entryType;
 
-	private String categoria;
+	private String category;
 
-	private String pessoa;
+	private String person;
 
 	public String getDescription() {
 		return description;
@@ -47,36 +47,36 @@ public class ResumoLancamento {
 		this.dataPagamento = dataPagamento;
 	}
 
-	public BigDecimal getValor() {
-		return valor;
+	public BigDecimal getValue() {
+		return value;
 	}
 
-	public void setValor(BigDecimal valor) {
-		this.valor = valor;
+	public void setValue(BigDecimal valor) {
+		this.value = valor;
 	}
 
-	public EntryType getTipoLancamento() {
+	public EntryType getEntryType() {
 		return entryType;
 	}
 
-	public void setTipoLancamento(EntryType entryType) {
+	public void setEntryType(EntryType entryType) {
 		this.entryType = entryType;
 	}
 
-	public String getCategoria() {
-		return categoria;
+	public String getCategory() {
+		return category;
 	}
 
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
+	public void setCategory(String categoria) {
+		this.category = categoria;
 	}
 
-	public String getPessoa() {
-		return pessoa;
+	public String getPerson() {
+		return person;
 	}
 
-	public void setPessoa(String pessoa) {
-		this.pessoa = pessoa;
+	public void setPerson(String pessoa) {
+		this.person = pessoa;
 	}
 
 	public Long getId() {
@@ -89,10 +89,10 @@ public class ResumoLancamento {
 		this.description = descricao;
 		this.dataVencimento = dataVencimento;
 		this.dataPagamento = dataPagamento;
-		this.valor = valor;
+		this.value = valor;
 		this.entryType = entryType;
-		this.categoria = categoria;
-		this.pessoa = pessoa;
+		this.category = categoria;
+		this.person = pessoa;
 	}
 
 }

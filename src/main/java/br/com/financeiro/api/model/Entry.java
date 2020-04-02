@@ -42,23 +42,25 @@ public class Entry implements Serializable {
 	@Getter
 	@Setter
 	@NotNull
-	@DateTimeFormat(pattern="yyyy-mm-dd")
+	@DateTimeFormat(pattern = "yyyy-mm-dd")
 	private LocalDate dataVencimento;
 
 	@Column(name = "data_pagamento")
 	@Getter
 	@Setter
-	@DateTimeFormat(pattern="yyyy-mm-dd")
+	@DateTimeFormat(pattern = "yyyy-mm-dd")
 	private LocalDate paymentDate;
 
+	@Column(name = "valor")
 	@Getter
 	@Setter
 	@NotNull
 	private BigDecimal value;
 
+	@Column(name = "observacao")
 	@Getter
 	@Setter
-	@Size(max=100)
+	@Size(max = 100)
 	private String observacao;
 
 	@Enumerated(EnumType.STRING)

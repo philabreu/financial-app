@@ -1,6 +1,7 @@
 package br.com.financeiro.api.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -31,35 +32,31 @@ public class PersonService {
 	public List<Person> findAll() {
 		try {
 			List<Person> peopleList = personRepository.findAll();
-			
+
 			return peopleList;
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	public Person findOne(Long id) {
 		try {
-			Person pessoaBuscada = personRepository.findOne(id);
+			Optional<Person> optionalPerson = personRepository.findById(id);
 
-			if (pessoaBuscada == null) {
+			if (optionalPerson.isEmpty()) {
 				throw new EmptyResultDataAccessException(1);
 			}
 
-			return pessoaBuscada;
+			return optionalPerson.get();
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
@@ -70,70 +67,60 @@ public class PersonService {
 
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	public Person update(Person person, Long id) {
 		try {
-			Person pessoaSalva = findOne(id);
+			Person savedPerson = findOne(id);
 
-			BeanUtils.copyProperties(person, pessoaSalva, "id");
+			BeanUtils.copyProperties(person, savedPerson, "id");
 
-			return personRepository.save(pessoaSalva);
+			return personRepository.save(savedPerson);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	public void delete(Long id) {
 		try {
-			Person pessoaBuscada = findOne(id);
+			Person searchedPerson = findOne(id);
 
-			entryRepository.findAll()
-			.stream()
-			.forEach(lancamento -> {
-				if (lancamento.getPerson().getId().equals(pessoaBuscada.getId())) {
+			entryRepository.findAll().stream().forEach(lancamento -> {
+				if (lancamento.getPerson().getId().equals(searchedPerson.getId())) {
 					throw new RuntimeException("pessoa não pode ser excluída pois pertence a um lançamento.");
 				}
 			});
 
-			personRepository.delete(pessoaBuscada);
+			personRepository.delete(searchedPerson);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}
 
 	public void partialUpdate(Long id, Boolean ativo) {
 		try {
-			Person pessoaSalva = findOne(id);
-			pessoaSalva.setActive(ativo);
+			Person searchedPerson = findOne(id);
+			searchedPerson.setActive(ativo);
 
-			personRepository.save(pessoaSalva);
+			personRepository.save(searchedPerson);
 		} catch (HttpClientErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, e.getCause().getMessage());
 		} catch (HttpServerErrorException e) {
 			LOGGER.error(ExceptionUtils.getStackTrace(e));
-			LOGGER.error(ExceptionUtils.getRootCauseMessage(e));
 			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCause().getMessage());
 		}
 	}

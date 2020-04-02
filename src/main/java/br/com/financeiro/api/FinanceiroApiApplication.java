@@ -10,14 +10,4 @@ public class FinanceiroApiApplication {
 		SpringApplication.run(FinanceiroApiApplication.class, args);
 	}
 
-	/*@Bean
-	public WebMvcConfigurer configurarCors() {
-		return new WebMvcConfigurerAdapter() {
-			@Override
-			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/*").allowedOrigins("http://localhost:8000");
-			}
-		};
-	}*/
-
 }
