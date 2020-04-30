@@ -2,7 +2,6 @@ package br.com.financeiro.api.config;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -24,32 +23,24 @@ import br.com.financeiro.api.security.CustomTokenEnhancer;
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
-	@Autowired
 	private AuthenticationManager authenticationManager;
-	
+
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-		clients.inMemory()
-			.withClient("angular")
-			.secret("angular")
-			.scopes("read", "write")
-			.authorizedGrantTypes("password", "refresh_token")
-			.accessTokenValiditySeconds(40)
-			.refreshTokenValiditySeconds(3600 * 24);
+		clients.inMemory().withClient("angular").secret("angular").scopes("read", "write")
+				.authorizedGrantTypes("password", "refresh_token").accessTokenValiditySeconds(40)
+				.refreshTokenValiditySeconds(3600 * 24);
 	}
-	
+
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-		TokenEnhancerChain tokenEnhancerChain= new TokenEnhancerChain();
+		TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
 		tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-		
-		endpoints
-			.tokenStore(tokenStore())
-			.tokenEnhancer(tokenEnhancerChain)
-			.reuseRefreshTokens(false)
-			.authenticationManager(authenticationManager);
+
+		endpoints.tokenStore(tokenStore()).tokenEnhancer(tokenEnhancerChain).reuseRefreshTokens(false)
+				.authenticationManager(authenticationManager);
 	}
-	
+
 	@Bean
 	public TokenEnhancer tokenEnhancer() {
 		return new CustomTokenEnhancer();
