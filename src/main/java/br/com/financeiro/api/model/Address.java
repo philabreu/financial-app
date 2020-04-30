@@ -35,5 +35,4 @@ public class Address {
 	@Getter
 	@Size(max = 30)
 	private String estado;
-
 }
