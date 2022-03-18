@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    database: MYSQL
+    show-sql: true
+  datasource:
+    url: jdbc:mysql://localhost/financeiro?createDatabaseIfNotExist=true&&useSSL=false
+    username: root
+    password: root
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+  profiles:
+    active: oauth-security
+  flyway:
+    baselineOnMigrate: true
